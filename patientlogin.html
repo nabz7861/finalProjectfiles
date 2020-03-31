@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <script type="text/javascript"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <link rel="stylesheet" type="text/css" href="cc1css.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="website.webmanifest">
+        <link rel="stylesheet" type="text/css" href="navcss.css">
+
+    <script src="https://xkeshi.github.io/vue-qrcode/js/vue-qrcode.js"></script>
+    <link rel="icon" type="image/x-icon" href="" />
+
+
+    <div id="searchFilter">
+        
+          <div id="allTheNav">
+    <nav id="navigator" class="navbar" :class="{navbaropen: opened}">
+      <span class="open-slide">
+        <a href="#" @click="opened = !opened">
+          <div>
+            <div class="bar" :class="{topopen: opened}"></div>
+            <div class="bar" :class="{midopen: opened}"></div>
+            <div class="bar" :class="{botopen: opened}"></div>
+          </div>
+        </a>
+      </span>
+      
+    </nav>
+  <div id="side-menu" class="side-nav" :class="{sidenavopen: opened}">
+ <a href="patientlogin.html">Login</a>
+      <a href="workngQRREG.html">Register</a>
+      <a href="loggedbooking.html">Booking</a>
+    <a href="waitinglistpatient.html">Queue</a>
+
+
+      
+  </div>
+ 
+  </div>
+
+        <center>
+      <h1>Login </h1>
+            
+             <template v-if="logged">
+       <h4> You are logged in as {{localname}}</h4>
+    </template>
+          
+           <br>
+
+        </center>
+        <div>
+
+            <center>
+                <button v-on:click='deletea'>logout</button>
+
+
+              
+
+
+                <link href="https://fonts.googleapis.com/css?family=Sacramento&display=swap" rel="stylesheet">
+
+
+
+
+
+
+<!--
+                <div id="navigation">
+                    <toplinks v-bind:page=page></toplinks>
+                </div>
+-->
+            </center>
+            <br> <br> <br>
+
+
+            <center>
+
+                <input type="text" id="myInput" placeholder="Confirm name" v-model='name'>
+
+                <br> <br>
+                <input type="email" id="myInput" placeholder="Email" v-model='topic'>
+
+                <br> <br>
+                <input type="password" id="myInput" placeholder="Password" v-model='location'>
+                <br><br>
+           
+
+
+
+
+                <br>
+                <button v-on:click='addCourse' class=" button button1">Login</button>
+                <br>
+
+                <br>
+
+                <h2>
+                    <p id="demo">
+                </h2>
+                <h2>
+                    <p id="err">
+                </h2>
+            </center>
+
+            <br> <br>
+            <br><br><br>
+
+            <template v-if="show">
+
+
+    <center>
+
+
+                <h2>Hello</h2>
+                <input type="text" v-model="valueQr" maxlength="20">
+                <br> <br> <br> <br>
+            
+                    <br>
+                   
+                    <qrcode :value='valueQr' :options="{ size: sizeQr }"></qrcode>
+                    <br> <br> <br>
+
+                    <button @click="myFunction()">reload</button>
+                    <button @click="show = ! show">View my Id</button>
+                </center>
+
+            </template>
+
+
+
+        </div>
+
+
+        <br><br><br>
+        <br><br><br><br><br><br>
+
+
+
+    </div>
+
+
+
+    <script>
+        const API = "https://myappnabz.ngrok.io";
+
+        Vue.component('toplinks', {
+//            props: ['page'],
+            template: `<div>
+<a href='loggedbooking.html' v-bind:class="{active: page==='home'}">book</a>
+
+<a href='workngQRREG.html' v-bind:class="{active: page==='userpage'}">reg</a>
+
+<a href='waitinglistpractice.html' v-bind:class="{active: page==='userpage'}">Review</a>
+
+
+
+
+</div>`
+        })
+
+
+        var Vue = window.Vue;
+        var VueQrcode = window.VueQrcode;
+
+        Vue.component('qrcode', VueQrcode);
+
+
+        var searchApp = new Vue({
+            el: '#searchFilter',
+
+            data: {
+                dbTable: [],
+                selectOne: '',
+                page: '',
+                name: '',
+                logged: '',
+                localname: '',
+                selectOne: '',
+                    opened: false,
+                currentlog: '',
+                show: '',
+                trust: '',
+
+                valueQr: '',
+
+                topic: '',
+                valueQr: '',
+                sizeQr: 200,
+                location: '',
+
+            },
+              mounted() {
+    if (localStorage.name) {
+      this.localname = localStorage.name;
+        
+    }
+
+  },
+
+            methods: {
+                reset: function() {
+                    this.userLocations = [];
+
+                },
+
+                createCollection: function() {
+
+                    fetch(API + '/createCollection', {
+                        headers: {
+                            "Content-Type": "application/json; charset=utf-8"
+                        },
+                        method: 'post',
+                        body: JSON.stringify({
+                            collection: this.newdbcollection
+                        })
+                    }).then((res) => {
+                        console.log(res)
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                },
+
+
+                addCourse: function() {
+
+                    if (!this.topic) {
+
+                        document.getElementById("demo").innerHTML = "Missing information";
+                        return;
+                    }
+
+                    var string = this.topic
+                    var exp = /(\w(=?@)\w+\.{1}[a-zA-Z]{2,})/i
+                    var test = exp.test(string);
+                    if (test === false) {
+                        document.getElementById("demo").innerHTML = "Re-enter email";
+                        return;
+                    }
+
+
+
+                    //  users = JSON.parse(localStorage.getItem('users'));
+
+
+
+                    fetch(API + '/logg/' + 'upload', {
+                        headers: {
+                            "Content-Type": "application/json; charset=utf-8"
+                        },
+                        method: 'post',
+                        body: JSON.stringify({
+                            topic: this.topic,
+                            location: this.location,
+                            name: this.name,
+
+
+
+                        })
+
+
+                    }).then((res) => {
+
+
+                        if (res.status === 200) {
+                            
+localStorage.setItem("name", this.name);
+localStorage.setItem("email", this.topic);       
+
+                            document.getElementById("err").innerHTML = "success";
+
+ window.location.reload()
+
+                        }
+                        if (res.status === 404) {
+                            document.getElementById("err").innerHTML = "err";
+
+                        } else {
+
+
+
+
+                            return;
+
+                        }
+
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                },
+
+                deletea: function() {
+                    //fetching all courses from database on page load
+   
+localStorage.removeItem('name');
+  localStorage.removeItem('email');
+
+
+                    fetch(API + '/delete/' + 'delete', {
+                            method: 'GET',
+
+                            headers: {
+                                "Content-Type": "application/json; charset=utf-8"
+                            },
+
+                        }).then(res => res.json())
+                        .then(jsonData => {
+                     
+
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                        })
+
+
+                },
+
+
+
+
+                catch (err) {
+                    document.getElementById("err").innerHTML = err.message;
+                }
+            },
+
+
+            created() {
+                //fetching all courses from database on page load
+            //current logged user      
+ var localname = localStorage.getItem("name");
+
+                
+                 if (localname) {
+     this.logged = true;
+    this.show = true;
+        
+    }
+                                
+//                
+//                    if (typeof localname != "undefined") {
+//                                this.logged = true;
+//
+//                            }
+//                            if (typeof localname != null) {
+//                                this.show = true;
+//
+//                            }
+                
+                     this.valueQr = localname;
+
+                fetch(API + '/qr/' + 'currentlogged', {
+                        method: 'GET',
+
+                        headers: {
+                            "Content-Type": "application/json; charset=utf-8"
+                        },
+                    }).then(res => res.json())
+                    .then(jsonData => {
+                        jsonData.forEach(element => {
+                            let newItem = {
+                                id: element._id,
+                                topic: element.topic,
+                                location: element.location,
+                                name: element.name
+
+
+
+                            };
+                            
+  
+ 
+                        
+
+
+
+                            this.dbTable.push(newItem);
+                       
+
+
+                        });
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+            },
+
+
+
+
+        });
+    </script>
+
+
+</body></html>

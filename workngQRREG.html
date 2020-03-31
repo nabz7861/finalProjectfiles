@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+	<meta charset="utf-8">
+	<title>Example Title</title>
+     <script src="https://unpkg.com/vue"></script>
+        
+	<meta name="author" content="Your Name">
+	<meta name="description" content="Example description">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="">
+	<link rel="icon" type="image/x-icon" href=""/>
+     <link rel="stylesheet" type="text/css" href="cc1css.css">
+        <link rel="manifest" href="website.webmanifest">
+         <link rel="stylesheet" type="text/css" href="navcss.css">
+</head>
+
+<body>
+
+<div id="searchFilter">
+    
+   <div id="allTheNav">
+    <nav id="navigator" class="navbar" :class="{navbaropen: opened}">
+      <span class="open-slide">
+        <a href="#" @click="opened = !opened">
+          <div>
+            <div class="bar" :class="{topopen: opened}"></div>
+            <div class="bar" :class="{midopen: opened}"></div>
+            <div class="bar" :class="{botopen: opened}"></div>
+          </div>
+        </a>
+      </span>
+      
+    </nav>
+  <div id="side-menu" class="side-nav" :class="{sidenavopen: opened}">
+ <a href="patientlogin.html">Login</a>
+      <a href="workngQRREG.html">Register</a>
+      <a href="loggedbooking.html">Booking</a>
+    <a href="waitinglistpatient.html">Queue</a>
+
+  
+      
+  </div>
+  
+     
+        
+   
+       
+       
+
+
+
+
+        <link href="https://fonts.googleapis.com/css?family=Sacramento&display=swap" rel="stylesheet">
+
+
+
+
+
+<br>
+<br>
+        <div>
+
+ 
+  <template v-if="show">
+      
+      
+<!--    <h1>Heading</h1>-->
+  
+  </template>
+
+  
+<!--            <button @click="show = ! show">Switch</button>-->
+</div>
+
+        <center>
+            <h1>Registration </h1>
+            <br>
+            
+             <input type="text" id="myInput" placeholder="Name" v-model='name'>
+            <br><br>
+            
+            <input type="email" id="myInput" placeholder="Email" v-model='topic'>
+
+            <br> <br>
+            <input type="password" id="myInput" placeholder="Password" v-model='location'>
+            <br><br>
+       
+
+
+
+
+            <br>
+            <button v-on:click='addCourse' class=" button button1">Login</button>
+            <br>
+            <br>
+            <h2>
+                <p id="demo">
+            </h2>
+            <h2>
+                <p id="err">
+            </h2>
+   </center>
+
+        <br> <br>
+        <br><br><br><br><br><br>
+        <br><br><br><br><br><br>
+
+          
+        
+        
+        
+        
+    </div>      
+</div>
+    
+    
+    
+    
+    
+    
+    
+    <script>
+        const API = "https://myappnabz.ngrok.io";
+    var Vue = window.Vue;
+  var VueQrcode = window.VueQrcode;
+
+  Vue.component('qrcode', VueQrcode);
+
+  new Vue({
+    el: '#searchFilter',
+    data:{
+    valueQr:'',
+        name: '',
+ dbTable: [],
+selectOne: '',
+         opened: false,
+    page: '',
+        show: true,
+    selectOne: '',
+
+     topic: '',
+    location: '',
+    sizeQr:200
+    },
+      
+     mounted() {
+      this.myFunction()
+      console.log(this.valueQr);
+    },
+    
+     methods:{
+    myFunction: function () {		
+     this.valueQr = Math.random()*100; //multiply to generate random number between 0, 100
+    },
+         
+                   reset: function() {
+                    this.userLocations = [];
+
+                },
+
+                createCollection: function() {
+
+                    fetch(API + '/createCollection', {
+                        headers: {
+                            "Content-Type": "application/json; charset=utf-8"
+                        },
+                        method: 'post',
+                        body: JSON.stringify({
+                            collection: this.newdbcollection
+                        })
+                    }).then((res) => {
+                        console.log(res)
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                },
+
+
+                addCourse: function() {
+
+                    if (!this.topic) {
+
+                        document.getElementById("demo").innerHTML = "Missing information";
+                        return;
+                    }
+
+                    var string = this.topic
+                    var exp = /(\w(=?@)\w+\.{1}[a-zA-Z]{2,})/i
+                    var test = exp.test(string);
+                    if (test === false) {
+                        document.getElementById("demo").innerHTML = "Re-enter email";
+                        return;
+                    }
+
+
+
+                    users = JSON.parse(localStorage.getItem('users'));
+
+
+
+                    fetch(API + '/qr/' + 'upload', {
+                        headers: {
+                            "Content-Type": "application/json; charset=utf-8"
+                        },
+                        method: 'post',
+                        body: JSON.stringify({
+                            topic: this.topic,
+                            location: this.location,
+                            name: this.name,
+
+
+
+                        })
+
+
+                    }).then((res) => {
+                        if (res.status === 400) {
+                            document.getElementById("err").innerHTML = "This Username is taken";
+                        } else {
+                            window.location.reload()
+                                document.getElementById("err").innerHTML = "Success";
+                        }
+
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                },
+
+
+
+
+                catch (err) {
+                    document.getElementById("err").innerHTML = err.message;
+                }
+            },
+                  created() {
+                //fetching all courses from database on page load
+
+
+
+                fetch(API + '/qr/' + 'upload', {
+                        method: 'GET',
+
+                        headers: {
+                            "Content-Type": "application/json; charset=utf-8"
+                        },
+                    }).then(res => res.json())
+                    .then(jsonData => {
+                        jsonData.forEach(element => {
+                            let newItem = {
+                                id: element._id,
+                                topic: element.topic,
+                                location: element.location
+
+
+
+                            };
+
+                            this.dbTable.push(newItem);
+                            
+console.log(newItem);
+var myJSON = JSON.stringify(newItem);           
+//        var txt = newItem;
+//var obj = JSON.stringify(txt);
+                            
+document.getElementById("myText").value = newItem.topic;
+
+                            
+document.getElementById("demo").innerHTML = newItem.topic + ", " + newItem.location;
+
+                        });
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+            },
+      
+         
+         
+   
+  });
+    
+    
+    
+    
+    
+    </script>
+    
+    
+    
+</body>
+
+</html>
