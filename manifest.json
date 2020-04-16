@@ -1,6 +1,6 @@
 {
-  "name": "Finalyearproject",
-  "short_name": "FYP",
+  "name": "Medical Booking App",
+  "short_name": "Medical-Booking",
   "theme_color": "#659ecb",
   "background_color": "#74baf1",
   "display": "fullscreen",
@@ -48,5 +48,8 @@
       "type": "image/png"
     }
   ],
-  "splash_pages": null
+
+    "display": "fullscreen",
+    "theme_color": "#B12A34",
+    "background_color": "#B12A34"
 }
